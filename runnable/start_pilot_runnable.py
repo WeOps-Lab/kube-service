@@ -3,12 +3,13 @@ from langchain_core.runnables import RunnableLambda
 from loguru import logger
 
 from user_types.start_pilot_request import StartPilotRequest
+from utils.kubernetes_client import KubernetesClient
 from utils.template_loader import core_template
 
 
 class StartPilotRunnable:
     def __init__(self):
-        pass
+        self.client = KubernetesClient()
 
     def execute(self, req: StartPilotRequest) -> bool:
         logger.info(f"启动Pilot: {req.pilot_id}")
@@ -29,7 +30,7 @@ class StartPilotRunnable:
         try:
             deployment_template = core_template.get_template("pilot/deployment.yml")
             deployment = deployment_template.render(dynamic_dict)
-            self.app_api.create_namespaced_deployment(namespace=req.namespace, body=yaml.safe_load(deployment))
+            self.client.app_api.create_namespaced_deployment(namespace=req.namespace, body=yaml.safe_load(deployment))
             logger.info(f"启动Pilot[{req.id}]Pod成功")
         except Exception as e:
             logger.error(f"启动Pilot[{req.id}]Pod失败: {e}")
@@ -37,7 +38,7 @@ class StartPilotRunnable:
         try:
             svc_template = core_template.get_template("pilot/svc.yml")
             svc = svc_template.render(dynamic_dict)
-            self.core_api.create_namespaced_service(namespace=req.namespace, body=yaml.safe_load(svc))
+            self.client.core_api.create_namespaced_service(namespace=req.namespace, body=yaml.safe_load(svc))
             logger.info(f"启动Pilot[{req.id}]Service成功")
         except Exception as e:
             logger.error(f"启动Pilot[{req.id}]Service失败: {e}")
@@ -46,8 +47,8 @@ class StartPilotRunnable:
             try:
                 ingress_template = core_template.get_template("pilot/ingress.yml")
                 ingress = ingress_template.render(dynamic_dict)
-                self.custom_object_api.create_namespaced_custom_object(
-                    group=self.traefik_resource_group,
+                self.client.custom_object_api.create_namespaced_custom_object(
+                    group=self.client.traefik_resource_group,
                     version="v1alpha1",
                     plural="ingressroutes",
                     body=yaml.safe_load(ingress),
