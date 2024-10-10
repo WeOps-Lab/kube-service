@@ -7,7 +7,7 @@ from fastapi import Depends, FastAPI, Header, HTTPException
 from starlette.middleware.cors import CORSMiddleware
 from typing_extensions import Annotated
 
-from runnable.list_pod_runnable import ListPodRunnable
+from runnable.list_pilot_runnable import ListPilotRunnable
 from runnable.start_pilot_runnable import StartPilotRunnable
 from runnable.stop_pilot_runnable import StopPilotRunnable
 
@@ -36,7 +36,7 @@ class Bootstrap:
         )
 
     def setup_router(self):
-        add_routes(self.app, ListPodRunnable().instance(), path='/list_pod')
+        add_routes(self.app, ListPilotRunnable().instance(), path='/list_pilot')
         add_routes(self.app, StartPilotRunnable().instance(), path='/start_pilot')
         add_routes(self.app, StopPilotRunnable().instance(), path='/stop_pilot')
 

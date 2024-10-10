@@ -1,6 +1,6 @@
 from langserve import CustomUserType
 
 
-class PodInfo(CustomUserType):
+class PilotInfo(CustomUserType):
     name: str
     status: str
