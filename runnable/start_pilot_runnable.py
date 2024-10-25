@@ -31,17 +31,17 @@ class StartPilotRunnable:
             deployment_template = core_template.get_template("pilot/deployment.yml")
             deployment = deployment_template.render(dynamic_dict)
             self.client.app_api.create_namespaced_deployment(namespace=req.namespace, body=yaml.safe_load(deployment))
-            logger.info(f"启动Pilot[{req.id}]Pod成功")
+            logger.info(f"启动Pilot[{req.pilot_id}]Pod成功")
         except Exception as e:
-            logger.error(f"启动Pilot[{req.id}]Pod失败: {e}")
+            logger.error(f"启动Pilot[{req.pilot_id}]Pod失败: {e}")
 
         try:
             svc_template = core_template.get_template("pilot/svc.yml")
             svc = svc_template.render(dynamic_dict)
             self.client.core_api.create_namespaced_service(namespace=req.namespace, body=yaml.safe_load(svc))
-            logger.info(f"启动Pilot[{req.id}]Service成功")
+            logger.info(f"启动Pilot[{req.pilot_id}]Service成功")
         except Exception as e:
-            logger.error(f"启动Pilot[{req.id}]Service失败: {e}")
+            logger.error(f"启动Pilot[{req.pilot_id}]Service失败: {e}")
 
         if req.enable_bot_domain:
             try:
@@ -54,9 +54,9 @@ class StartPilotRunnable:
                     body=yaml.safe_load(ingress),
                     namespace=self.namespace,
                 )
-                logger.info(f"启动Pilot[{req.id}]Ingress成功")
+                logger.info(f"启动Pilot[{req.pilot_id}]Ingress成功")
             except Exception as e:
-                logger.error(f"启动Pilot[{req.id}]Ingress失败: {e}")
+                logger.error(f"启动Pilot[{req.pilot_id}]Ingress失败: {e}")
 
     def instance(self):
         runnable = RunnableLambda(self.execute).with_types(

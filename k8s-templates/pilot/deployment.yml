@@ -15,7 +15,7 @@ spec:
       containers:
         - name: pilot-{{bot_id}}
           image: etherfurnace/pilot
-          imagePullPolicy: Never
+          # imagePullPolicy: Never
           command: [ "/bin/bash" ]
           args:
             - -c
