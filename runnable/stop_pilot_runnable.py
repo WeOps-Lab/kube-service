@@ -11,13 +11,17 @@ class StopPilotRunnable:
 
     def execute(self, req: StopPilotRequest) -> bool:
         try:
-            self.client.app_api.delete_namespaced_deployment(name=f"pilot-{req.bot_id}", namespace=req.namespace)
+            self.client.app_api.delete_namespaced_deployment(
+                name=f"pilot-{req.bot_id}", namespace=req.namespace
+            )
             logger.info(f"停止Pilot[{req.bot_id}]Pod成功")
         except Exception as e:
             logger.error(f"停止Pilot[{req.bot_id}]Pod失败: {e}")
 
         try:
-            self.client.core_api.delete_namespaced_service(name=f"pilot-{req.bot_id}-service", namespace=req.namespace)
+            self.client.core_api.delete_namespaced_service(
+                name=f"pilot-{req.bot_id}-service", namespace=req.namespace
+            )
             logger.info(f"停止Pilot[{req.bot_id}]Service成功")
         except Exception as e:
             logger.error(f"停止Pilot[{req.bot_id}]Service失败: {e}")
@@ -33,7 +37,10 @@ class StopPilotRunnable:
         except Exception as e:
             logger.error(f"停止Pilot[{req.bot_id}]Ingress失败: {e}")
 
+        return True
+
     def instance(self):
         runnable = RunnableLambda(self.execute).with_types(
-            input_type=StopPilotRequest, output_type=bool)
+            input_type=StopPilotRequest, output_type=bool
+        )
         return runnable
