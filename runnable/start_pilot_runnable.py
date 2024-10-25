@@ -30,7 +30,9 @@ class StartPilotRunnable:
         try:
             deployment_template = core_template.get_template("pilot/deployment.yml")
             deployment = deployment_template.render(dynamic_dict)
-            self.client.app_api.create_namespaced_deployment(namespace=req.namespace, body=yaml.safe_load(deployment))
+            self.client.app_api.create_namespaced_deployment(
+                namespace=req.namespace, body=yaml.safe_load(deployment)
+            )
             logger.info(f"启动Pilot[{req.pilot_id}]Pod成功")
         except Exception as e:
             logger.error(f"启动Pilot[{req.pilot_id}]Pod失败: {e}")
@@ -38,7 +40,9 @@ class StartPilotRunnable:
         try:
             svc_template = core_template.get_template("pilot/svc.yml")
             svc = svc_template.render(dynamic_dict)
-            self.client.core_api.create_namespaced_service(namespace=req.namespace, body=yaml.safe_load(svc))
+            self.client.core_api.create_namespaced_service(
+                namespace=req.namespace, body=yaml.safe_load(svc)
+            )
             logger.info(f"启动Pilot[{req.pilot_id}]Service成功")
         except Exception as e:
             logger.error(f"启动Pilot[{req.pilot_id}]Service失败: {e}")
@@ -57,8 +61,10 @@ class StartPilotRunnable:
                 logger.info(f"启动Pilot[{req.pilot_id}]Ingress成功")
             except Exception as e:
                 logger.error(f"启动Pilot[{req.pilot_id}]Ingress失败: {e}")
+        return True
 
     def instance(self):
         runnable = RunnableLambda(self.execute).with_types(
-            input_type=StartPilotRequest, output_type=bool)
+            input_type=StartPilotRequest, output_type=bool
+        )
         return runnable

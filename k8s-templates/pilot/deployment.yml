@@ -15,13 +15,13 @@ spec:
       containers:
         - name: pilot-{{bot_id}}
           image: etherfurnace/pilot
-          # imagePullPolicy: Never
+          imagePullPolicy: Always
           command: [ "/bin/bash" ]
           args:
             - -c
             - |
               mkdir -p data
-              python3 ops_pilot_cli.py get_bot_config_data
+              python3 cli.py get_bot_config_data
               supervisord -n
           env:
             - name: TZ
