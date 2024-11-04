@@ -56,7 +56,7 @@ class StartPilotRunnable:
                     version="v1alpha1",
                     plural="ingressroutes",
                     body=yaml.safe_load(ingress),
-                    namespace=self.namespace,
+                    namespace=req.namespace,
                 )
                 logger.info(f"启动Pilot[{req.pilot_id}]Ingress成功")
             except Exception as e:
